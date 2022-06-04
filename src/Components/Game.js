@@ -2,224 +2,87 @@ import { Component } from "react";
 import "./Game.css";
 require("bootstrap");
 
-const win = "WIN SITUATION";
-const lose = "LOSE SITUATION";
-
-// const getAnswerArray = (rows) => {
-// 	console.log("Current table configuration:", rows);
-// 	const row1 = rows[0];
-// 	const row2 = rows[1];
-// 	const row3 = rows[2];
-// 	const row4 = rows[3];
-// 	console.log("xor =", row1 ^ row2 ^ row3 ^ row4);
-// 	let answer = isException(row1, row2, row3, row4);
-// 	if (answer === false) {
-// 		answer = row1 ^ row2 ^ row3 ^ row4;
-// 		console.log("Situation:", answer ? lose : win);
-// 	} else console.log("Situation:", answer);
-// 	console.log("==========================");
-// };
-
 const getAnswer = () => {
+	const winning = "WINNING SITUATION";
+	const losing = "LOSING SITUATION";
+	const answer = document.getElementById("answer");
+
 	const row1 = Number(document.getElementById("input1").value);
 	const row2 = Number(document.getElementById("input2").value);
 	const row3 = Number(document.getElementById("input3").value);
 	const row4 = Number(document.getElementById("input4").value);
 	console.log(
-		`Current table configuration: ${row1}, ${row2}, ${row3}, ${row4}`
+		`Current table configuration: [${row1}, ${row2}, ${row3}, ${row4}]`
 	);
-	console.log("xor = ", row1 ^ row2 ^ row3 ^ row4);
-	let answer = isException(row1, row2, row3, row4);
-	if (answer === false) {
-		answer = row1 ^ row2 ^ row3 ^ row4;
-		document.getElementById("answer").innerText = answer ? lose : win;
-		console.log("Situation:", answer ? lose : win);
-	} else {
-		document.getElementById("answer").innerText = answer;
-		console.log("Situation:", answer);
+
+	if (!isValid(row1, row2, row3, row4)) {
+		console.log("Please enter a valid table configuration");
+		console.log("==========================");
+		return (answer.innerText = "Please enter a valid table configuration");
 	}
+
+	console.log("xor =", row1 ^ row2 ^ row3 ^ row4);
+	const exception = isException(row1, row2, row3, row4);
+
+	if (exception === "initial") {
+		console.log("Exception: Sum of all cards = 16");
+		console.log("You need to remove at least one card to start playing");
+		console.log("==========================");
+		return (answer.innerText =
+			"You need to remove at least one card to start playing"); // (7, 5, 3, 1)
+	}
+
+	if (exception === "lost") {
+		console.log("Exception: Sum of all cards = 0");
+		console.log("You lost the game");
+		console.log("==========================");
+		return (answer.innerText = "You lost the game"); // (0, 0, 0, 0)
+	}
+
+	if (exception === "minimumPiles") {
+		console.log("Exception: No piles bigger than 1");
+		if (row1 + row2 + row3 + row4 === 1) {
+			console.log("You won the game");
+			console.log("==========================");
+			return (answer.innerText = "You won the game"); // (1, 0, 0, 0)
+		}
+		if (row1 + row2 + row3 + row4 === 3) {
+			console.log(winning);
+			console.log("==========================");
+			return (answer.innerText = winning); // (1, 1, 1, 0)
+		}
+		console.log(losing);
+		console.log("==========================");
+		return (answer.innerText = losing); // (1, 1, 0, 0), (1, 1, 1, 1)
+	}
+
+	console.log(row1 ^ row2 ^ row3 ^ row4 ? losing : winning);
+	answer.innerText = row1 ^ row2 ^ row3 ^ row4 ? losing : winning;
 	console.log("==========================");
 };
 
-const isException = (row1, row2, row3, row4) => {
-	if (row1 + row2 + row3 + row4 === 7 + 5 + 3 + 1)
-		return "You need to remove at least one card to start playing"; // (7, 5, 3, 1)
-	// Case 0:
-	if (row1 + row2 + row3 + row4 === 0) {
-		console.log("Exception: Sum of all cards = 0");
-		return "You lost the game"; // (0, 0, 0, 0)
-	}
-	// Case 1:
-	if (row1 + row2 + row3 + row4 === 1) {
-		console.log("Exception: Sum of all cards = 1");
-		return "You won the game"; // (1, 0, 0, 0)
-	}
-	// Case 2:
-	if (row1 + row2 + row3 + row4 === 2) {
-		console.log("Exception: Sum of all cards = 2");
-		return lose; // (2, 0, 0, 0) or (1, 1, 0, 0)
-	}
-	// Case 3:
-	if (row1 + row2 + row3 + row4 === 3) {
-		console.log("Exception: Sum of all cards = 3");
-		if ([row1, row2, row3, row4].filter((x) => x === 1).length === 3)
-			return win; // (1, 1, 1, 0)
-		return lose; // (3, 0, 0, 0) or (2, 1, 0, 0)
-	}
-	// Case 4:
-	if (row1 + row2 + row3 + row4 === 4) {
-		console.log("Exception: Sum of all cards = 4");
-		if ([row1, row2, row3, row4].filter((x) => x === 2).length === 2)
-			return win; // (2, 2, 0, 0)
-		return lose; // (4, 0, 0, 0) or (3, 1, 0, 0) or (2, 1, 1, 0) or (1, 1, 1, 1)
-	}
+const isValid = (row1, row2, row3, row4) => {
+	if (
+		Number.isInteger(row1) &&
+		Number.isInteger(row2) &&
+		Number.isInteger(row3) &&
+		Number.isInteger(row4) &&
+		row1 >= 0 &&
+		row2 >= 0 &&
+		row3 >= 0 &&
+		row4 >= 0
+	)
+		return true;
 	return false;
 };
 
-// All possible combinations, for testing purposes:
-// getAnswerArray([0, 0, 0, 0]);
-// getAnswerArray([0, 0, 0, 1]);
-// getAnswerArray([0, 0, 0, 2]);
-// getAnswerArray([0, 0, 0, 3]);
-// getAnswerArray([0, 0, 0, 4]);
-// getAnswerArray([0, 0, 0, 5]);
-// getAnswerArray([0, 0, 0, 6]);
-// getAnswerArray([0, 0, 0, 7]);
-// getAnswerArray([0, 0, 1, 1]);
-// getAnswerArray([0, 0, 1, 2]);
-// getAnswerArray([0, 0, 1, 3]);
-// getAnswerArray([0, 0, 1, 4]);
-// getAnswerArray([0, 0, 1, 5]);
-// getAnswerArray([0, 0, 1, 6]);
-// getAnswerArray([0, 0, 1, 7]);
-// getAnswerArray([0, 0, 2, 2]);
-// getAnswerArray([0, 0, 2, 3]);
-// getAnswerArray([0, 0, 2, 4]);
-// getAnswerArray([0, 0, 2, 5]);
-// getAnswerArray([0, 0, 2, 6]);
-// getAnswerArray([0, 0, 2, 7]);
-// getAnswerArray([0, 0, 3, 3]);
-// getAnswerArray([0, 0, 3, 4]);
-// getAnswerArray([0, 0, 3, 5]);
-// getAnswerArray([0, 0, 3, 6]);
-// getAnswerArray([0, 0, 3, 7]);
-// getAnswerArray([0, 0, 4, 4]);
-// getAnswerArray([0, 0, 4, 5]);
-// getAnswerArray([0, 0, 4, 6]);
-// getAnswerArray([0, 0, 4, 7]);
-// getAnswerArray([0, 0, 5, 5]);
-// getAnswerArray([0, 0, 5, 6]);
-// getAnswerArray([0, 0, 5, 7]);
-// getAnswerArray([0, 1, 1, 1]);
-// getAnswerArray([0, 1, 1, 2]);
-// getAnswerArray([0, 1, 1, 3]);
-// getAnswerArray([0, 1, 1, 4]);
-// getAnswerArray([0, 1, 1, 5]);
-// getAnswerArray([0, 1, 1, 6]);
-// getAnswerArray([0, 1, 1, 7]);
-// getAnswerArray([0, 1, 2, 2]);
-// getAnswerArray([0, 1, 2, 3]);
-// getAnswerArray([0, 1, 2, 4]);
-// getAnswerArray([0, 1, 2, 5]);
-// getAnswerArray([0, 1, 2, 6]);
-// getAnswerArray([0, 1, 2, 7]);
-// getAnswerArray([0, 1, 3, 3]);
-// getAnswerArray([0, 1, 3, 4]);
-// getAnswerArray([0, 1, 3, 5]);
-// getAnswerArray([0, 1, 3, 6]);
-// getAnswerArray([0, 1, 3, 7]);
-// getAnswerArray([0, 1, 4, 4]);
-// getAnswerArray([0, 1, 4, 5]);
-// getAnswerArray([0, 1, 4, 6]);
-// getAnswerArray([0, 1, 4, 7]);
-// getAnswerArray([0, 1, 5, 5]);
-// getAnswerArray([0, 1, 5, 6]);
-// getAnswerArray([0, 1, 5, 7]);
-// getAnswerArray([0, 2, 2, 2]);
-// getAnswerArray([0, 2, 2, 3]);
-// getAnswerArray([0, 2, 2, 4]);
-// getAnswerArray([0, 2, 2, 5]);
-// getAnswerArray([0, 2, 2, 6]);
-// getAnswerArray([0, 2, 2, 7]);
-// getAnswerArray([0, 2, 3, 3]);
-// getAnswerArray([0, 2, 3, 4]);
-// getAnswerArray([0, 2, 3, 5]);
-// getAnswerArray([0, 2, 3, 6]);
-// getAnswerArray([0, 2, 3, 7]);
-// getAnswerArray([0, 2, 4, 4]);
-// getAnswerArray([0, 2, 4, 5]);
-// getAnswerArray([0, 2, 4, 6]);
-// getAnswerArray([0, 2, 4, 7]);
-// getAnswerArray([0, 2, 5, 5]);
-// getAnswerArray([0, 2, 5, 6]);
-// getAnswerArray([0, 2, 5, 7]);
-// getAnswerArray([0, 3, 3, 3]);
-// getAnswerArray([0, 3, 3, 4]);
-// getAnswerArray([0, 3, 3, 5]);
-// getAnswerArray([0, 3, 3, 6]);
-// getAnswerArray([0, 3, 3, 7]);
-// getAnswerArray([0, 3, 4, 4]);
-// getAnswerArray([0, 3, 4, 5]);
-// getAnswerArray([0, 3, 4, 6]);
-// getAnswerArray([0, 3, 4, 7]);
-// getAnswerArray([0, 3, 5, 5]);
-// getAnswerArray([0, 3, 5, 6]);
-// getAnswerArray([0, 3, 5, 7]);
-// getAnswerArray([1, 1, 1, 1]);
-// getAnswerArray([1, 1, 1, 2]);
-// getAnswerArray([1, 1, 1, 3]);
-// getAnswerArray([1, 1, 1, 4]);
-// getAnswerArray([1, 1, 1, 5]);
-// getAnswerArray([1, 1, 1, 6]);
-// getAnswerArray([1, 1, 1, 7]);
-// getAnswerArray([1, 1, 2, 2]);
-// getAnswerArray([1, 1, 2, 3]);
-// getAnswerArray([1, 1, 2, 4]);
-// getAnswerArray([1, 1, 2, 5]);
-// getAnswerArray([1, 1, 2, 6]);
-// getAnswerArray([1, 1, 2, 7]);
-// getAnswerArray([1, 1, 3, 3]);
-// getAnswerArray([1, 1, 3, 4]);
-// getAnswerArray([1, 1, 3, 5]);
-// getAnswerArray([1, 1, 3, 6]);
-// getAnswerArray([1, 1, 3, 7]);
-// getAnswerArray([1, 1, 4, 4]);
-// getAnswerArray([1, 1, 4, 5]);
-// getAnswerArray([1, 1, 4, 6]);
-// getAnswerArray([1, 1, 4, 7]);
-// getAnswerArray([1, 1, 5, 5]);
-// getAnswerArray([1, 1, 5, 6]);
-// getAnswerArray([1, 1, 5, 7]);
-// getAnswerArray([1, 2, 2, 2]);
-// getAnswerArray([1, 2, 2, 3]);
-// getAnswerArray([1, 2, 2, 4]);
-// getAnswerArray([1, 2, 2, 5]);
-// getAnswerArray([1, 2, 2, 6]);
-// getAnswerArray([1, 2, 2, 7]);
-// getAnswerArray([1, 2, 3, 3]);
-// getAnswerArray([1, 2, 3, 4]);
-// getAnswerArray([1, 2, 3, 5]);
-// getAnswerArray([1, 2, 3, 6]);
-// getAnswerArray([1, 2, 3, 7]);
-// getAnswerArray([1, 2, 4, 4]);
-// getAnswerArray([1, 2, 4, 5]);
-// getAnswerArray([1, 2, 4, 6]);
-// getAnswerArray([1, 2, 4, 7]);
-// getAnswerArray([1, 2, 5, 5]);
-// getAnswerArray([1, 2, 5, 6]);
-// getAnswerArray([1, 2, 5, 7]);
-// getAnswerArray([1, 3, 3, 3]);
-// getAnswerArray([1, 3, 3, 4]);
-// getAnswerArray([1, 3, 3, 5]);
-// getAnswerArray([1, 3, 3, 6]);
-// getAnswerArray([1, 3, 3, 7]);
-// getAnswerArray([1, 3, 4, 4]);
-// getAnswerArray([1, 3, 4, 5]);
-// getAnswerArray([1, 3, 4, 6]);
-// getAnswerArray([1, 3, 4, 7]);
-// getAnswerArray([1, 3, 5, 5]);
-// getAnswerArray([1, 3, 5, 6]);
-// getAnswerArray([1, 3, 5, 7]);
+const isException = (row1, row2, row3, row4) => {
+	if (row1 + row2 + row3 + row4 === 7 + 5 + 3 + 1) return "initial";
+	if (row1 + row2 + row3 + row4 === 0) return "lost";
+	if ([row1, row2, row3, row4].filter((x) => x === 0 || x === 1).length === 4)
+		return "minimumPiles"; // No piles bigger than 1
+	return false;
+};
 
 export default class Games extends Component {
 	render() {
@@ -232,7 +95,7 @@ export default class Games extends Component {
 						textAlign: "center",
 					}}
 				>
-					WIN OR LOSE
+					WINNING OR LOSING
 				</h2>
 				<h3>
 					Please describe the table configuration AFTER you've
@@ -315,7 +178,7 @@ export default class Games extends Component {
 				<button
 					type="button"
 					className="btn btn-primary btn-lg"
-                    id="calculate-btn"
+					id="calculate-btn"
 					onClick={getAnswer}
 				>
 					Calculate
