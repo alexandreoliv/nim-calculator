@@ -115,8 +115,8 @@ export default class Games extends Component {
 						marginTop: "20px",
 					}}
 				>
-					If you're on a losing condition, try to figure out how to
-					change the table so that you're on a winning condition
+					If you're in a losing condition, try to figure out how to
+					change the table so that you're in a winning condition
 				</div>
 
 				<div className="rows-div">
