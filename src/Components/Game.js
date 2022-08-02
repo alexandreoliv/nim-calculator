@@ -88,19 +88,37 @@ export default class Games extends Component {
 	render() {
 		return (
 			<div>
-				<h2
+				<h1>NIM GAME CALCULATOR</h1>
+				<h4>
+					Misère game version: the player to take the last object
+					loses
+				</h4>
+
+				<div
+					class="alert alert-info"
+					role="alert"
 					style={{
-						fontWeight: "bold",
-						margin: "0 0 10px 10px",
-						textAlign: "center",
+						fontSize: "0.6em",
+						padding: "5px",
+						marginTop: "30px",
 					}}
 				>
-					WINNING OR LOSING
-				</h2>
-				<h3>
-					Please describe the table configuration AFTER you've
-					finished playing
-				</h3>
+					Please describe the desired table configuration (as if
+					you've just played your turn)
+				</div>
+				<div
+					class="alert alert-warning"
+					role="alert"
+					style={{
+						fontSize: "0.6em",
+						padding: "5px",
+						marginTop: "20px",
+					}}
+				>
+					If you're on a losing condition, try to figure out how to
+					change the table so that you're on a winning condition
+				</div>
+
 				<div className="rows-div">
 					<div className="input-group input-group-lg">
 						<span
@@ -179,6 +197,9 @@ export default class Games extends Component {
 					type="button"
 					className="btn btn-primary btn-lg"
 					id="calculate-btn"
+					style={{
+						marginTop: "20px",
+					}}
 					onClick={getAnswer}
 				>
 					Calculate
