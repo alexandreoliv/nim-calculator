@@ -27,6 +27,9 @@ There's no fancy design here - the purpose is to be didactic only.
 -   [React.js](https://reactjs.org/)
 -   [Node.js](https://nodejs.org/en/)
 -   [Bootstrap](https://getbootstrap.com/)
+-   [Docker](https://www.docker.com/) (optionally)
+-   [Kubernetes](https://kubernetes.io/) (optionally)
+-   [Nginx](https://www.nginx.com/) (optionally)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
